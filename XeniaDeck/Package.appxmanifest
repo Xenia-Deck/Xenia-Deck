@@ -9,11 +9,11 @@
   IgnorableNamespaces="uap rescap systemai">
 
   <Identity
-    Name="XeniaDeck"
-    Publisher="CN=murar"
+    Name="XeniaDeck.XeniaDeck"
+    Publisher="CN=B6927859-E3FB-4D05-A9C4-3727C01EA301"
     Version="0.0.1.0" />
 
-  <mp:PhoneIdentity PhoneProductId="548f704a-44f8-4bec-b887-5514a5845102" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
+  <mp:PhoneIdentity PhoneProductId="1116abf2-2b77-43cc-9d69-d904eb8689ed" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
   <Properties>
     <DisplayName>Xenia Deck</DisplayName>
