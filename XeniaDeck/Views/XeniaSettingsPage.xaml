@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="XeniaDeck.Views.XeniaSettingsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:controls="using:CommunityToolkit.WinUI.Controls"
+    xmlns:model="using:Tomlyn.Model"
+    xmlns:viewmodels="using:XeniaDeck.Core.ViewModels"
+    xmlns:selectors="using:XeniaDeck.Selectors"
+    xmlns:System="using:System"
+    mc:Ignorable="d"
+    Loaded="{x:Bind _viewModel.LoadSettingsAsync}">
+
+    <Page.Resources>
+        <selectors:TomlSettingTemplateSelector x:Key="TomlSettingTemplateSelector">
+
+            <selectors:TomlSettingTemplateSelector.BooleanTemplate>
+                <DataTemplate x:DataType="viewmodels:TomlSetting">
+                    <controls:SettingsCard Header="{x:Bind Key}"
+                                           Description="{x:Bind Description}">
+                        <ToggleSwitch AutomationProperties.Name="simple ToggleSwitch"
+                                      IsOn="{x:Bind (System:Boolean)Value}"/>
+                    </controls:SettingsCard>
+                </DataTemplate>
+            </selectors:TomlSettingTemplateSelector.BooleanTemplate>
+
+            <selectors:TomlSettingTemplateSelector.LongTemplate>
+                <DataTemplate x:DataType="viewmodels:TomlSetting">
+                    <controls:SettingsCard Header="{x:Bind Key}"
+                                           Description="{x:Bind Description}">
+                        <TextBox Text="{x:Bind (System:Int64)Value}"
+                                 VerticalAlignment="Center"/>
+                    </controls:SettingsCard>
+                </DataTemplate>
+            </selectors:TomlSettingTemplateSelector.LongTemplate>
+
+            <selectors:TomlSettingTemplateSelector.DoubleTemplate>
+                <DataTemplate x:DataType="viewmodels:TomlSetting">
+                    <controls:SettingsCard Header="{x:Bind Key}"
+                                           Description="{x:Bind Description}">
+                        <TextBox Text="{x:Bind (System:Double)Value}"
+                                 VerticalAlignment="Center"/>
+                    </controls:SettingsCard>
+                </DataTemplate>
+            </selectors:TomlSettingTemplateSelector.DoubleTemplate>
+
+            <selectors:TomlSettingTemplateSelector.StringTemplate>
+                <DataTemplate x:DataType="viewmodels:TomlSetting">
+                    <controls:SettingsCard Header="{x:Bind Key}"
+                                           Description="{x:Bind Description}">
+                        <TextBox Text="{x:Bind (System:String)Value}"
+                                 VerticalAlignment="Center"/>
+                    </controls:SettingsCard>
+                </DataTemplate>
+            </selectors:TomlSettingTemplateSelector.StringTemplate>
+
+        </selectors:TomlSettingTemplateSelector>
+    </Page.Resources>
+    
+    <Grid RowSpacing="24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        
+        <TextBlock Text="Xenia Settings (Under construction)"
+                   Style="{StaticResource TitleLargeTextBlockStyle}"
+                   Grid.Row="0"/>
+
+        <ScrollView Grid.Row="1">
+            <ItemsRepeater ItemsSource="{x:Bind _viewModel.TomlSections, Mode=OneWay}">
+                <ItemsRepeater.ItemTemplate>
+                    <DataTemplate x:DataType="viewmodels:TomlSection">
+                        <!-- TODO: use a selector bar instead of the ugly settings expander -->
+                        <controls:SettingsExpander Header="{x:Bind Name}"
+                                                   IsExpanded="True">
+                            <controls:SettingsExpander.Items>
+                                <!-- TODO: use a NumberBox instead of input things -->
+                                <ItemsRepeater ItemsSource="{x:Bind Settings, Mode=OneWay}"
+                                               ItemTemplate="{StaticResource TomlSettingTemplateSelector}"/>
+                            </controls:SettingsExpander.Items>
+                        </controls:SettingsExpander>
+                    </DataTemplate>
+                </ItemsRepeater.ItemTemplate>
+            </ItemsRepeater>
+        </ScrollView>
+    </Grid>
+</Page>

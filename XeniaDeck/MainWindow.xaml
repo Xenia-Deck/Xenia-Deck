@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window
+	x:Class="XeniaDeck.MainWindow"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:local="using:XeniaDeck"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	mc:Ignorable="d"
+	xmlns:appmodel="using:Windows.ApplicationModel" 
+	Title="{x:Bind appmodel:AppInfo.Current.DisplayInfo.DisplayName}">
+	
+	<Window.SystemBackdrop>
+		<MicaBackdrop Kind="Base"/>
+	</Window.SystemBackdrop>
+
+	<Grid x:Name="WindowGrid">
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="*"/>
+		</Grid.RowDefinitions>
+		
+		<TitleBar x:Name="AppTitleBar"
+				  Title="{x:Bind appmodel:AppInfo.Current.DisplayInfo.DisplayName}"
+				  Grid.Row="0">
+			<TitleBar.IconSource>
+                <ImageIconSource ImageSource="/Assets/AppLogo.ico" />
+			</TitleBar.IconSource>
+		</TitleBar>
+
+		<NavigationView x:Name="AppNavigationView"
+						Grid.Row="1"
+						IsBackButtonVisible="Collapsed"
+						SelectionChanged="AppNavigationView_SelectionChanged"
+                        Loaded="AppNavigationView_Loaded">
+			
+			<NavigationView.MenuItems>
+                <NavigationViewItem x:Uid="GameLibraryNavigationViewItem" Icon="Library" Tag="XeniaDeck.Views.GameLibraryPage"/>
+                <NavigationViewItem x:Uid="XeniaSettingsNavigationViewItem" Icon="Setting" Tag="XeniaDeck.Views.XeniaSettingsPage" />
+                <NavigationViewItem x:Uid="ManageXeniaNavigationViewItem" Icon="Manage" Tag="XeniaDeck.Views.ManageXeniaPage" />
+			</NavigationView.MenuItems>
+
+			<Frame x:Name="ContentFrame"
+				   Padding="24"
+				   NavigationFailed="ContentFrame_NavigationFailed"/>
+		
+		</NavigationView>
+	</Grid>
+</Window>

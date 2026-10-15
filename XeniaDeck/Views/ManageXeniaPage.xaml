@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="XeniaDeck.Views.ManageXeniaPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:CommunityToolkit.WinUI.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:converters="using:CommunityToolkit.WinUI.Converters"
+    mc:Ignorable="d"
+    x:Name="Page"
+    Loaded="{x:Bind _viewModel.RefreshInstallationStatus}">
+
+    <Page.Resources>
+        <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+        <converters:BoolToVisibilityConverter x:Key="InvertedBoolToVisibilityConverter" 
+                                                TrueValue="Collapsed" 
+                                                FalseValue="Visible"/>
+    </Page.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock x:Uid="ManageXeniaTextBlock"
+                   Padding="0,0,0,24"
+                   Style="{StaticResource TitleLargeTextBlockStyle}"
+                   Grid.Row="0"/>
+
+        <ScrollView Grid.Row="1">
+            <ScrollView.Content>
+                <StackPanel Spacing="{StaticResource SelectorBarItemSpacing}">
+
+                    <controls:SettingsExpander x:Uid="EmulatorManagementSettingsExpander"
+                                               IsExpanded="True">
+
+                        <controls:SettingsExpander.Items>
+
+                            <controls:SettingsCard Header="Xenia"
+                                                   Description="Not installed">
+                                <TextBlock Text="Coming soon"/>
+                            </controls:SettingsCard>
+                            <controls:SettingsCard Header="Xenia Canary (Recommended)"
+                                                   Description="{x:Bind _viewModel.XeniaCanaryStatusDescription, Mode=OneWay}">
+                                <StackPanel Orientation="Horizontal" Spacing="8">
+
+                                    <Grid>
+                                        <ProgressRing Visibility="{x:Bind _viewModel.InstallXeniaCanaryCommand.IsRunning, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                                        <ProgressRing Visibility="{x:Bind _viewModel.CheckForUpdateCommand.IsRunning, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                                        <ProgressRing Visibility="{x:Bind _viewModel.UninstallXeniaCanaryCommand.IsRunning, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                                    </Grid>
+
+                                    <Button x:Uid="InstallButton"
+                                            Style="{StaticResource AccentButtonStyle}"
+                                            Command="{x:Bind _viewModel.InstallXeniaCanaryCommand}"
+                                            Visibility="{x:Bind _viewModel.IsXeniaCanaryInstalled, Mode=OneWay, Converter={StaticResource InvertedBoolToVisibilityConverter}}"/>
+
+                                    <Button x:Uid="CheckForUpdateButton"
+                                            Command="{x:Bind _viewModel.CheckForUpdateCommand}"
+                                            Visibility="{x:Bind _viewModel.IsXeniaCanaryInstalled, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}"/>
+
+                                    <Button x:Uid="UninstallButton"
+                                            Command="{x:Bind _viewModel.UninstallXeniaCanaryCommand}"
+                                            Visibility="{x:Bind _viewModel.IsXeniaCanaryInstalled, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}"/>
+
+                                </StackPanel>
+                            </controls:SettingsCard>
+                            <controls:SettingsCard Header="Xenia Netplay"
+                                                   Description="Not installed">
+
+                                <TextBlock Text="Coming soon"/>
+                            </controls:SettingsCard>
+                            <controls:SettingsCard Header="Xenia Mousehook"
+                                                   Description="Not installed">
+                                <TextBlock Text="Coming soon"/>
+                            </controls:SettingsCard>
+
+                        </controls:SettingsExpander.Items>
+                    </controls:SettingsExpander>
+                </StackPanel>
+            </ScrollView.Content>
+        </ScrollView>
+    </Grid>
+</Page>

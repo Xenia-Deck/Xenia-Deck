@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "XeniaDeck (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "XeniaDeck (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}
