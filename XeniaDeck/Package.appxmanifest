@@ -10,7 +10,7 @@
 
   <Identity
     Name="XeniaDeck"
-    Publisher="CN=murar"
+    Publisher="CN=Xenia Deck"
     Version="0.0.1.0" />
 
   <mp:PhoneIdentity PhoneProductId="548f704a-44f8-4bec-b887-5514a5845102" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
