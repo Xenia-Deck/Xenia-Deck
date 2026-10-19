@@ -25,7 +25,10 @@ jobs:
       run: dotnet restore
 
     - name: Build solution
-      run: dotnet build --no-restore
+      run: dotnet build
+        --no-restore
+        /p:AppxPackageSigningEnabled=false
+        /p:AppxPackageSigningRequired=false
     
     - name: Run tests
       run: dotnet test --no-build --verbosity normal
