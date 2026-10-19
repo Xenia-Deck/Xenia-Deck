@@ -1,0 +1,13 @@
+name: CD Production Pipeline
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy-to-prod:
+    uses: ./.github/workflows/_msstore-deploy.yml
+    with:
+      flight_id: "your-production-flight-id-here" # 👈 Paste your Prod ID here
+    secrets: inherit # Automatically shares your repo secrets with the engine
