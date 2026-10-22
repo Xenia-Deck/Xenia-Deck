@@ -93,23 +93,20 @@
 
   <!-- Publish Properties -->
   <PropertyGroup>
-    <PublishReadyToRun Condition="'$(Configuration)' == 'Debug'">False</PublishReadyToRun>
-    <PublishReadyToRun Condition="'$(Configuration)' != 'Debug'">True</PublishReadyToRun>
-    <PublishTrimmed Condition="'$(Configuration)' == 'Debug'">False</PublishTrimmed>
-    <PublishTrimmed Condition="'$(Configuration)' != 'Debug'">True</PublishTrimmed>
+    <PublishReadyToRun>False</PublishReadyToRun>
+    <PublishTrimmed>False</PublishTrimmed>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <DefaultLanguage>en-US</DefaultLanguage>
     <PackageIcon></PackageIcon>
     <UserSecretsId>341fea22-b052-433e-82f2-bbc057d07910</UserSecretsId>
     <ApplicationIcon>Assets\AppLogo.ico</ApplicationIcon>
     <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
-    <AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
+    <AppxPackageSigningEnabled>False</AppxPackageSigningEnabled>
     <AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
     <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
     <GenerateTestArtifacts>False</GenerateTestArtifacts>
     <AppxBundle>Never</AppxBundle>
     <HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
-    <PackageCertificateThumbprint>E575D94C5119D70457E01F315141189BE9846E05</PackageCertificateThumbprint>
     <GenerateTemporaryStoreCertificate>True</GenerateTemporaryStoreCertificate>
   </PropertyGroup>
   <ItemGroup>
