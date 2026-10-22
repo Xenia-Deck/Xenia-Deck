@@ -1,0 +1,16 @@
+name: Deploy Staging Flight
+
+on:
+  push:
+    branches: [ staging ]
+  pull_request:
+    branches: [ staging ]
+
+jobs:
+  run-staging:
+    uses: ./.github/workflows/_build-and-package.yml
+    with:
+      build_configuration: 'Release'
+      environment_name: 'staging'
+      publish_to_store: ${{ github.event_name == 'push' }}
+    secrets: inherit
