@@ -70,7 +70,7 @@ jobs:
     - name: Authenticate Microsoft Store CLI
       if: ${{ inputs.publish_to_store }}
       run: |
-          msstore reconfigure ` 
+        msstore reconfigure ` 
           --tenantId ${{ secrets.AZURE_AD_TENANT_ID }} `
           --sellerId ${{ secrets.SELLER_ID }} `
           --clientId ${{ secrets.AZURE_AD_APPLICATION_CLIENT_ID }} `
