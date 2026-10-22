@@ -8,7 +8,7 @@ on:
     branches: [ "master", "staging" ]
 
 jobs:
-  test:
+  build-test-package:
     runs-on: windows-latest
 
     env:
@@ -40,24 +40,23 @@ jobs:
           --configuration ${{ env.CONFIG }} `
           --verbosity normal
 
-  package:
-    needs: test
-    runs-on: windows-latest
-    if: github.event_name == 'push'
-
-    steps:
     - name: Setup MSBuild
+      if: github.event_name == 'push'
       uses: microsoft/setup-msbuild@v2
 
     - name: Package WinUI 3 App
+      if: github.event_name == 'push'
       run: |
         msbuild XeniaDeck\XeniaDeck.csproj `
           /p:Configuration=Release `
           /p:Platform=x64 `
           /p:UapAppxPackageBuildMode=StoreUpload `
-          /p:AppxBundle=Always
+          /p:AppxPackageSigningEnabled=false `
+          /p:GenerateAppxPackageOnBuild=true `
+          /p:GenerateTemporaryStoreCertificate=false
 
     - name: Upload MS Store package
+      if: github.event_name == 'push'
       uses: actions/upload-artifact@v4
       with:
         name: msixupload
