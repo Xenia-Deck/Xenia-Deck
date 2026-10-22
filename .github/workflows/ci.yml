@@ -52,7 +52,8 @@ jobs:
           /p:Platform=x64 `
           /p:UapAppxPackageBuildMode=StoreUpload `
           /p:AppxPackageSigningEnabled=false `
-          /p:GenerateAppxPackageOnBuild=true
+          /p:GenerateAppxPackageOnBuild=true `
+          /p:GenerateTemporaryStoreCertificate=false
 
     - name: Upload MS Store package
       if: github.event_name == 'push'
