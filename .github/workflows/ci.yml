@@ -4,6 +4,8 @@ on:
   pull_request:
     branches: [ "master", "staging", "dev" ]
     types: [ opened, synchronize, reopened ]
+  push:
+    branches: [ "master", "staging" ]
 
 jobs:
   test:
@@ -25,10 +27,40 @@ jobs:
       run: dotnet restore
 
     - name: Build solution
-      run: dotnet build
-        --no-restore
-        /p:AppxPackageSigningEnabled=false
-        /p:AppxPackageSigningRequired=false
-    
+      run: |
+        dotnet build `
+          --no-restore `
+          --configuration "${{ env.CONFIG }}" `
+          --verbosity normal
+
     - name: Run tests
-      run: dotnet test --no-build --verbosity normal
+      run: |
+        dotnet test `
+          --no-build `
+          --configuration ${{ env.CONFIG }} `
+          --verbosity normal
+
+  package:
+    needs: test
+    runs-on: windows-latest
+    if: github.event_name == 'push'
+
+    steps:
+    - name: Setup MSBuild
+      uses: microsoft/setup-msbuild@v2
+
+    - name: Package WinUI 3 App
+      run: |
+        msbuild XeniaDeck\XeniaDeck.csproj `
+          /p:Configuration=Release `
+          /p:Platform=x64 `
+          /p:UapAppxPackageBuildMode=StoreUpload `
+          /p:AppxBundle=Always
+
+    - name: Upload MS Store package
+      uses: actions/upload-artifact@v4
+      with:
+        name: msixupload
+        path: "**/*.msixupload"
+        if-no-files-found: error
+        retention-days: 30
