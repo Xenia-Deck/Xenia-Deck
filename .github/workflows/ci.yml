@@ -8,7 +8,7 @@ on:
     branches: [ "master", "staging" ]
 
 jobs:
-  test:
+  build-test-package:
     runs-on: windows-latest
 
     env:
