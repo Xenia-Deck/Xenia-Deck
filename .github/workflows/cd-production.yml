@@ -1,0 +1,44 @@
+name: CD Production Pipeline
+
+on:
+  workflow_run:
+    workflows: ["CI Pipeline"]
+    types: [ completed ]
+    branches:
+      - master
+
+permissions:
+  actions: read
+  contents: read
+
+jobs:
+  deploy-to-prod:
+    if: github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push'
+    runs-on: windows-latest
+    environment: production
+
+    steps:
+      - name: Download MS Store package
+        uses: actions/download-artifact@v4
+        with:
+          name: msixupload
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ github.token }}
+          path: msixupload
+
+      - name: Configure Microsoft Store CLI
+        uses: microsoft/microsoft-store-apppublisher@v1.4
+
+      - name: Authenticate Microsoft Store CLI
+        run: |
+          msstore reconfigure ` 
+            --tenantId ${{ secrets.AZURE_AD_TENANT_ID }} `
+            --sellerId ${{ secrets.SELLER_ID }} `
+            --clientId ${{ secrets.AZURE_AD_APPLICATION_CLIENT_ID }} `
+            --clientSecret ${{ secrets.AZURE_AD_APPLICATION_SECRET }}
+
+      - name: Publish production package
+        shell: pwsh
+        run: |
+          $PackagePath = (Get-ChildItem -Path ./msixupload/*.msix, ./msixupload/*.msixupload | Select-Object -First 1).FullName
+          msstore publish --package-path "$PackagePath" --store-id ${{ vars.STORE_ID }}
