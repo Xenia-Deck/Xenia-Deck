@@ -64,11 +64,11 @@ jobs:
           /p:GenerateTemporaryStoreCertificate=false
 
     - name: Configure Microsoft Store CLI
-      if: ${{ inputs.publish_to_store == 'true' }}
+      if: ${{ inputs.publish_to_store }}
       uses: microsoft/microsoft-store-apppublisher@v1.4
 
     - name: Authenticate Microsoft Store CLI
-      if: ${{ inputs.publish_to_store == 'true' }}
+      if: ${{ inputs.publish_to_store }}
       run: |
           msstore reconfigure ` 
           --tenantId ${{ secrets.AZURE_AD_TENANT_ID }} `
