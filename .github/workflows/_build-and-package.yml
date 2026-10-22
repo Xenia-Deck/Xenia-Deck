@@ -1,0 +1,91 @@
+name: Build and Publish Core
+
+on:
+  workflow_call:
+    inputs:
+
+      build_configuration:
+        required: true
+        type: string
+        default: 'Release'
+        
+      environment_name:
+        required: true
+        type: string
+
+      publish_to_store:
+        required: true
+        type: boolean
+
+jobs:
+  build:
+    environment: ${{ inputs.environment_name }}
+    
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout Source Code
+      uses: actions/checkout@v7
+
+    - name: Setup .NET SDK
+      uses: actions/setup-dotnet@v6
+      with:
+        dotnet-version: latest
+        dotnet-channel: LTS
+
+    - name: Restore solution dependencies
+      run: dotnet restore
+    
+    - name: Build solution
+      run: |
+        dotnet build `
+          --no-restore `
+          --configuration ${{ inputs.build_configuration }} `
+          --verbosity normal
+
+    - name: Run tests
+      run: |
+        dotnet test `
+          --no-build `
+          --configuration ${{ inputs.build_configuration }} `
+          --verbosity normal
+
+    - name: Setup MSBuild
+      uses: microsoft/setup-msbuild@v3
+
+    - name: Package WinUI 3 App
+      run: |
+        msbuild XeniaDeck\XeniaDeck.csproj `
+          /p:Configuration=${{ inputs.build_configuration }} `
+          /p:Platform=x64 `
+          /p:UapAppxPackageBuildMode=StoreUpload `
+          /p:AppxPackageSigningEnabled=false `
+          /p:GenerateAppxPackageOnBuild=true `
+          /p:GenerateTemporaryStoreCertificate=false
+
+    - name: Configure Microsoft Store CLI
+      if: ${{ inputs.publish_to_store == 'true' }}
+      uses: microsoft/microsoft-store-apppublisher@v1.4
+
+    - name: Authenticate Microsoft Store CLI
+      if: ${{ inputs.publish_to_store == 'true' }}
+      run: |
+          msstore reconfigure ` 
+          --tenantId ${{ secrets.AZURE_AD_TENANT_ID }} `
+          --sellerId ${{ secrets.SELLER_ID }} `
+          --clientId ${{ secrets.AZURE_AD_APPLICATION_CLIENT_ID }} `
+          --clientSecret ${{ secrets.AZURE_AD_APPLICATION_SECRET }}
+
+    - name: Publish Package (Staging Flight)
+      if: ${{ inputs.publish_to_store && inputs.environment_name == 'Staging' }}
+      shell: pwsh
+      run: |
+        $PackagePath = (Get-ChildItem -Path ./XeniaDeck/AppPackages/**/* -Include *.msixupload, *.msixbundle | Select-Object -First 1).FullName
+        msstore publish --package-path "$PackagePath" --store-id ${{ vars.STORE_ID }} --flightId ${{ secrets.FLIGHT_ID }}
+
+    - name: Publish Package (Production)
+      if: ${{ inputs.publish_to_store && inputs.environment_name == 'Production' }}
+      shell: pwsh
+      run: |
+        $PackagePath = (Get-ChildItem -Path ./XeniaDeck/AppPackages/**/* -Include *.msixupload, *.msixbundle | Select-Object -First 1).FullName
+        msstore publish --package-path "$PackagePath" --store-id ${{ vars.STORE_ID }}

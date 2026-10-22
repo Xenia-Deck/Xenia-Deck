@@ -1,0 +1,16 @@
+name: Deploy Production
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+    
+jobs:
+  run-production:
+    uses: ./.github/workflows/_build-and-package.yml
+    with:
+      build_configuration: 'Release'
+      environment_name: 'production'
+      publish_to_store: ${{ github.event_name == 'push' }}
+    secrets: inherit
