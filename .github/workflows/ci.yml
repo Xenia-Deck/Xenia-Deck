@@ -27,17 +27,17 @@ jobs:
       run: dotnet restore
 
     - name: Build solution
-      run: >-
-        dotnet build
-          --no-restore
-          --configuration ${{ env.CONFIG }}
+      run: |
+        dotnet build `
+          --no-restore `
+          --configuration "${{ env.CONFIG }}" `
           --verbosity normal
 
     - name: Run tests
-      run: >-
-        dotnet test
-          --no-build
-          --configuration ${{ env.CONFIG }}
+      run: |
+        dotnet test `
+          --no-build `
+          --configuration ${{ env.CONFIG }} `
           --verbosity normal
 
   package:
@@ -50,11 +50,11 @@ jobs:
       uses: microsoft/setup-msbuild@v2
 
     - name: Package WinUI 3 App
-      run: >-
-        msbuild XeniaDeck\XeniaDeck.csproj
-          /p:Configuration=Release
-          /p:Platform=x64
-          /p:UapAppxPackageBuildMode=StoreUpload
+      run: |
+        msbuild XeniaDeck\XeniaDeck.csproj `
+          /p:Configuration=Release `
+          /p:Platform=x64 `
+          /p:UapAppxPackageBuildMode=StoreUpload `
           /p:AppxBundle=Always
 
     - name: Upload MS Store package
