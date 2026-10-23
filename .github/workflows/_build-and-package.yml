@@ -80,7 +80,7 @@ jobs:
       if: ${{ inputs.publish_to_store && inputs.environment_name == 'Staging' }}
       shell: pwsh
       run: |
-        $PackagePath = (Get-ChildItem -Path ./XeniaDeck/AppPackages/**/* -Include *.msixupload, *.msixbundle | Select-Object -First 1).FullName
+        $PackagePath = (Get-ChildItem -Path ./XeniaDeck/AppPackages -Recurse -File -Include *.msixupload, *.msixbundle | Select-Object -First 1).FullName
         Write-Host "Package path found: $PackagePath"
         msstore publish --package-path "$PackagePath" --store-id ${{ vars.STORE_ID }} --flightId ${{ secrets.INSIDERS_FLIGHT_ID }}
 
