@@ -79,9 +79,9 @@ jobs:
     - name: Publish Package (Staging Flight)
       if: ${{ inputs.publish_to_store && inputs.environment_name == 'Staging' }}
       shell: pwsh
-      run: msstore publish ./XeniaDeck/AppPackages --appId ${{ vars.STORE_ID }} --flightId ${{ secrets.INSIDERS_FLIGHT_ID }}
+      run: msstore publish ./XeniaDeck/XeniaDeck.csproj --appId ${{ vars.STORE_ID }} --flightId ${{ secrets.INSIDERS_FLIGHT_ID }}
 
     - name: Publish Package (Production)
       if: ${{ inputs.publish_to_store && inputs.environment_name == 'Production' }}
       shell: pwsh
-      run: msstore publish ./XeniaDeck/AppPackages --appId ${{ vars.STORE_ID }}
+      run: msstore publish ./XeniaDeck/XeniaDeck.csproj --appId ${{ vars.STORE_ID }}
