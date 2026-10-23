@@ -70,18 +70,24 @@ jobs:
     - name: Authenticate Microsoft Store CLI
       if: ${{ inputs.publish_to_store }}
       run: |
-        msstore reconfigure --tenantId ${{ secrets.AZURE_AD_TENANT_ID }} --sellerId ${{ secrets.SELLER_ID }} --clientId ${{ secrets.AZURE_AD_APPLICATION_CLIENT_ID }} --clientSecret ${{ secrets.AZURE_AD_APPLICATION_SECRET }}
+        msstore reconfigure `
+          --tenantId ${{ secrets.AZURE_AD_TENANT_ID }} `
+          --sellerId ${{ secrets.SELLER_ID }} `
+          --clientId ${{ secrets.AZURE_AD_APPLICATION_CLIENT_ID }} `
+          --clientSecret ${{ secrets.AZURE_AD_APPLICATION_SECRET }}
 
     - name: Publish Package (Staging Flight)
       if: ${{ inputs.publish_to_store && inputs.environment_name == 'Staging' }}
       shell: pwsh
       run: |
         $PackagePath = (Get-ChildItem -Path ./XeniaDeck/AppPackages/**/* -Include *.msixupload, *.msixbundle | Select-Object -First 1).FullName
-        msstore publish --package-path "$PackagePath" --store-id ${{ vars.STORE_ID }} --flightId ${{ secrets.FLIGHT_ID }}
+        Write-Host "Package path found: $PackagePath"
+        msstore publish --package-path "$PackagePath" --store-id ${{ vars.STORE_ID }} --flightId ${{ secrets.INSIDERS_FLIGHT_ID }}
 
     - name: Publish Package (Production)
       if: ${{ inputs.publish_to_store && inputs.environment_name == 'Production' }}
       shell: pwsh
       run: |
         $PackagePath = (Get-ChildItem -Path ./XeniaDeck/AppPackages/**/* -Include *.msixupload, *.msixbundle | Select-Object -First 1).FullName
+        Write-Host "Package path found: $PackagePath"
         msstore publish --package-path "$PackagePath" --store-id ${{ vars.STORE_ID }}
