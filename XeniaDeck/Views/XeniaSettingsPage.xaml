@@ -30,6 +30,7 @@
                 <DataTemplate x:DataType="viewmodels:TomlSetting">
                     <controls:SettingsCard Header="{x:Bind Key}"
                                            Description="{x:Bind Description}">
+                        <!-- TODO: use a NumberBox instead of input things -->
                         <TextBox Text="{x:Bind (System:Int64)Value}"
                                  VerticalAlignment="Center"/>
                     </controls:SettingsCard>
@@ -40,6 +41,7 @@
                 <DataTemplate x:DataType="viewmodels:TomlSetting">
                     <controls:SettingsCard Header="{x:Bind Key}"
                                            Description="{x:Bind Description}">
+                        <!-- TODO: use a NumberBox instead of input things -->
                         <TextBox Text="{x:Bind (System:Double)Value}"
                                  VerticalAlignment="Center"/>
                     </controls:SettingsCard>
@@ -62,29 +64,45 @@
     <Grid RowSpacing="24">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         
         <TextBlock Text="Xenia Settings (Under construction)"
                    Style="{StaticResource TitleLargeTextBlockStyle}"
                    Grid.Row="0"/>
+        
+        <!-- TODO: follow the selectorbar tutorial to implement this properly -->
+        <SelectorBar Grid.Row="1">
+            <SelectorBarItem Text="General" IsSelected="True">
+                <SelectorBarItem.Icon>
+                    <FontIcon Glyph="&#xE713;" />
+                </SelectorBarItem.Icon>
+            </SelectorBarItem>
+            <SelectorBarItem Text="Display">
+                <SelectorBarItem.Icon>
+                    <FontIcon Glyph="&#xE7F4;" />
+                </SelectorBarItem.Icon>
+            </SelectorBarItem>
+            <SelectorBarItem Text="Graphics">
+                <SelectorBarItem.Icon>
+                    <FontIcon Glyph="&#xE964;" />
+                </SelectorBarItem.Icon>
+            </SelectorBarItem>
+            <SelectorBarItem Text="Input">
+                <SelectorBarItem.Icon>
+                    <FontIcon Glyph="&#xE7FC;" />
+                </SelectorBarItem.Icon>
+            </SelectorBarItem>
+            <SelectorBarItem Text="Audio">
+                <SelectorBarItem.Icon>
+                    <FontIcon Glyph="&#xE7F6;" />
+                </SelectorBarItem.Icon>
+            </SelectorBarItem>
+        </SelectorBar>
 
-        <ScrollView Grid.Row="1">
-            <ItemsRepeater ItemsSource="{x:Bind _viewModel.TomlSections, Mode=OneWay}">
-                <ItemsRepeater.ItemTemplate>
-                    <DataTemplate x:DataType="viewmodels:TomlSection">
-                        <!-- TODO: use a selector bar instead of the ugly settings expander -->
-                        <controls:SettingsExpander Header="{x:Bind Name}"
-                                                   IsExpanded="True">
-                            <controls:SettingsExpander.Items>
-                                <!-- TODO: use a NumberBox instead of input things -->
-                                <ItemsRepeater ItemsSource="{x:Bind Settings, Mode=OneWay}"
-                                               ItemTemplate="{StaticResource TomlSettingTemplateSelector}"/>
-                            </controls:SettingsExpander.Items>
-                        </controls:SettingsExpander>
-                    </DataTemplate>
-                </ItemsRepeater.ItemTemplate>
-            </ItemsRepeater>
-        </ScrollView>
+        <Frame Grid.Row="2"
+               x:Name="ContentFrame"
+               IsNavigationStackEnabled="False" />
     </Grid>
 </Page>
