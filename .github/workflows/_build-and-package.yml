@@ -64,13 +64,13 @@ jobs:
           /p:GenerateTemporaryStoreCertificate=false
 
     - name: Configure Microsoft Store CLI
-      if: ${{ inputs.publish_to_store == 'true' }}
+      if: ${{ inputs.publish_to_store }}
       uses: microsoft/microsoft-store-apppublisher@v1.4
 
     - name: Authenticate Microsoft Store CLI
-      if: ${{ inputs.publish_to_store == 'true' }}
+      if: ${{ inputs.publish_to_store }}
       run: |
-          msstore reconfigure ` 
+        msstore reconfigure `
           --tenantId ${{ secrets.AZURE_AD_TENANT_ID }} `
           --sellerId ${{ secrets.SELLER_ID }} `
           --clientId ${{ secrets.AZURE_AD_APPLICATION_CLIENT_ID }} `
@@ -79,13 +79,9 @@ jobs:
     - name: Publish Package (Staging Flight)
       if: ${{ inputs.publish_to_store && inputs.environment_name == 'Staging' }}
       shell: pwsh
-      run: |
-        $PackagePath = (Get-ChildItem -Path ./XeniaDeck/AppPackages/**/* -Include *.msixupload, *.msixbundle | Select-Object -First 1).FullName
-        msstore publish --package-path "$PackagePath" --store-id ${{ vars.STORE_ID }} --flightId ${{ secrets.FLIGHT_ID }}
+      run: msstore publish ./XeniaDeck --appId ${{ vars.STORE_ID }} --flightId ${{ secrets.INSIDERS_FLIGHT_ID }}
 
     - name: Publish Package (Production)
       if: ${{ inputs.publish_to_store && inputs.environment_name == 'Production' }}
       shell: pwsh
-      run: |
-        $PackagePath = (Get-ChildItem -Path ./XeniaDeck/AppPackages/**/* -Include *.msixupload, *.msixbundle | Select-Object -First 1).FullName
-        msstore publish --package-path "$PackagePath" --store-id ${{ vars.STORE_ID }}
+      run: msstore publish ./XeniaDeck --appId ${{ vars.STORE_ID }}
