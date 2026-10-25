@@ -16,11 +16,11 @@ namespace XeniaDeck.Core.ViewModels
         private readonly IDialogService _dialogService;
         private readonly IFilePickerService _filePickerService;
         private readonly IGameLibraryService _gameLibraryService;
-        private readonly IXeniaCanaryManagerService _xeniaVersionManagerService;
+        private readonly IXeniaManagerService _xeniaVersionManagerService;
         private readonly IInternalFoldersService _internalFoldersService;
         private readonly ILauncherService _launcherService;
 
-        public GameLibraryViewModel(IFileSystem fileSystem, IDialogService dialogService, IFilePickerService filePickerService, IGameLibraryService gameLibraryService, IXeniaCanaryManagerService xeniaVersionManagerService, IInternalFoldersService internalFoldersService, ILauncherService launcherService)
+        public GameLibraryViewModel(IFileSystem fileSystem, IDialogService dialogService, IFilePickerService filePickerService, IGameLibraryService gameLibraryService, IXeniaManagerService xeniaVersionManagerService, IInternalFoldersService internalFoldersService, ILauncherService launcherService)
         {
             _fileSystem = fileSystem;
             _dialogService = dialogService;
@@ -103,7 +103,9 @@ namespace XeniaDeck.Core.ViewModels
         {
             if (game != null)
             {
-                var filePaths = _fileSystem.Directory.GetFiles(_xeniaVersionManagerService.GetEmulatorFolderPath());
+                // TODO: very prototype, change later to select xenia version
+
+                var filePaths = _fileSystem.Directory.GetFiles(_xeniaVersionManagerService.GetEmulatorFolderPath(XeniaVersions.Canary));
 
                 var executablePath = filePaths.First(x => x.EndsWith(".exe", StringComparison.OrdinalIgnoreCase));
 
