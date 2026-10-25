@@ -89,9 +89,9 @@ namespace XeniaDeck
 
                     services.AddTransient<IGameLibraryService, GameLibraryService>();
                     services.AddTransient<ILocalCacheService, LocalCacheService>();
-                    services.AddTransient<IGitHubUpdateService, GitHubUpdateService>();
                     services.AddTransient<IGameFileExtensionIdentifierService, GameFileExtensionIdentifierService>();
                     services.AddTransient<IXeniaCanaryManagerService, XeniaCanaryManagerService>();
+                    services.AddTransient<IXeniaReleaseProviderService, GitHubXeniaReleaseProviderService>();
 
                     services.AddTransient<GameLibraryViewModel>();
                     services.AddTransient<ManageXeniaViewModel>();

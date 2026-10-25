@@ -3,18 +3,6 @@
     public interface IXeniaCanaryManagerService
     {
         /// <summary>
-        /// Checks for the latest emulator version
-        /// </summary>
-        /// <returns> The task object representing the asynchronous operation </returns>
-        Task CheckForUpdateAsync();
-
-        /// <summary>
-        /// Creates the folder where the emulator will be installed
-        /// </summary>
-        /// <returns> Emulator folder path </returns>
-        string CreateEmulatorFolderPath();
-
-        /// <summary>
         /// Gets the folder path of the emulator
         /// </summary>
         /// <returns> Emulator folder path </returns>
