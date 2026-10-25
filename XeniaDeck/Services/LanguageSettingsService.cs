@@ -17,7 +17,7 @@ namespace XeniaDeck.Services
 
             supportedLanguages.Add(new("System (Default)", new CultureInfo("")));
 
-            foreach (var languageCode in ApplicationLanguages.Languages)
+            foreach (var languageCode in ApplicationLanguages.ManifestLanguages)
             {
                 var cultureInfo = new CultureInfo(languageCode);
 
