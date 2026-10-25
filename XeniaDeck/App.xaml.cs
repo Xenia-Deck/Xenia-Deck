@@ -13,6 +13,7 @@ using System.Text.Json;
 using XeniaDeck.Core.Services;
 using XeniaDeck.Core.ViewModels;
 using XeniaDeck.Services;
+using XeniaManagerDatabase.Extensions;
 using Application = Microsoft.UI.Xaml.Application;
 
 namespace XeniaDeck
@@ -55,10 +56,8 @@ namespace XeniaDeck
                     });
 
                     services.AddHttpClient<IArchiveDownloadService, ArchiveDownloadService>();
-                    services.AddHttpClient<IXbox360DatabaseService, Xbox360DatabaseService>(x =>
-                    {
-                        x.BaseAddress = new Uri("https://xenia-manager.github.io/x360db/");
-                    });
+
+                    services.AddXbox360Database();
 
                     services.AddSingleton<IGitHubClient, GitHubClient>(x => new GitHubClient(new ProductHeaderValue("xenia_manager")));
                     services.AddTransient(x =>

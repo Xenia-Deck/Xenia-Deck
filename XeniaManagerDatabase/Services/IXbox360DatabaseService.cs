@@ -1,6 +1,6 @@
-﻿using XeniaDeck.Core.Models;
+﻿using XeniaManagerDatabase.Models;
 
-namespace XeniaDeck.Core.Services
+namespace XeniaManagerDatabase.Services
 {
     public interface IXbox360DatabaseService
     {
