@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using System.IO.Abstractions;
+using XeniaDeck.Core.Models;
 
 namespace XeniaDeck.Core.Services
 {
@@ -8,21 +9,21 @@ namespace XeniaDeck.Core.Services
     public class XeniaCanaryManagerService : IXeniaCanaryManagerService
     {
         private const string emulatorVersionName = "Xenia Canary";
-        private const int repositoryId = 200145485;
-        private const string fileName = "xenia_canary_windows.7z";
         private const string emulatorExecutableName = "xenia_canary.exe";
-        private const string cacheFileName = "latestRelease.json";
+        private const string installedReleaseCacheFileName = "installedReleaseCacheFileName.json";
 
         private readonly IFileSystem _fileSystem;
-        private readonly IGitHubUpdateService _gitHubUpdateService;
+        private readonly IXeniaReleaseProviderService _xeniaReleaseProvider;
+        private readonly ILocalCacheService _localCacheService;
         private readonly IArchiveDownloadService _archiveDownloadService;
         private readonly IInternalFoldersService _internalFoldersService;
         private readonly ILogger<XeniaCanaryManagerService> _logger;
 
-        public XeniaCanaryManagerService(IFileSystem fileSystem, IGitHubUpdateService gitHubUpdateService, IArchiveDownloadService archiveDownloadService, IInternalFoldersService internalFoldersService, ILogger<XeniaCanaryManagerService> logger)
+        public XeniaCanaryManagerService(IFileSystem fileSystem, IXeniaReleaseProviderService xeniaReleaseProvider, ILocalCacheService localCacheService, IArchiveDownloadService archiveDownloadService, IInternalFoldersService internalFoldersService, ILogger<XeniaCanaryManagerService> logger)
         {
             _fileSystem = fileSystem;
-            _gitHubUpdateService = gitHubUpdateService;
+            _xeniaReleaseProvider = xeniaReleaseProvider;
+            _localCacheService = localCacheService;
             _archiveDownloadService = archiveDownloadService;
             _internalFoldersService = internalFoldersService;
             _logger = logger;
@@ -30,16 +31,9 @@ namespace XeniaDeck.Core.Services
 
         public bool IsXeniaCanaryInstalled()
         {
-            try
-            {
-                var emulatorExecutablePath = _fileSystem.Path.Combine(GetEmulatorFolderPath(), emulatorExecutableName);
+            var emulatorExecutablePath = _fileSystem.Path.Combine(GetEmulatorFolderPath(), emulatorExecutableName);
 
-                return _fileSystem.File.Exists(emulatorExecutablePath);
-            }
-            catch
-            {
-                return false;
-            }
+            return _fileSystem.File.Exists(emulatorExecutablePath);
         }
 
         public string GetEmulatorFolderPath()
@@ -47,49 +41,23 @@ namespace XeniaDeck.Core.Services
             return _fileSystem.Path.Combine(_internalFoldersService.GetEmulatorsFolderPath(), emulatorVersionName);
         }
 
-        public string CreateEmulatorFolderPath()
-        {
-            try
-            {
-                var emulatorFolderPath = GetEmulatorFolderPath();
-
-                _fileSystem.Directory.CreateDirectory(emulatorFolderPath);
-
-                return emulatorFolderPath;
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, "Failed to create emulator folder");
-                throw new IOException("Failed to create emulator folder", e);
-            }
-        }
-
-        public async Task CheckForUpdateAsync()
-        {
-            try
-            {
-                await _gitHubUpdateService.GetLatestEmulatorAsync(repositoryId, fileName, cacheFileName);
-            }
-            catch
-            {
-                throw;
-            }
-        }
-
         public async Task InstallXeniaCanaryAsync()
         {
-            try
-            {
-                var emulatorData = await _gitHubUpdateService.GetCachedEmulatorAsync(cacheFileName);
-                if (emulatorData == null) return;
+            var latestEmulatorReleaseInfo = await _xeniaReleaseProvider.GetLatestReleaseAsync();
 
-                var emulatorFolderPath = CreateEmulatorFolderPath();
+            var installedReleaseInfo = await _localCacheService.GetFromCacheAsync<EmulatorReleaseInfo>(installedReleaseCacheFileName);
 
-                await _archiveDownloadService.DownloadAndExtractAsync(emulatorData.DownloadUrl, emulatorFolderPath);
-            }
-            catch
+            if (latestEmulatorReleaseInfo != null)
             {
-                throw;
+                if (!IsXeniaCanaryInstalled() || latestEmulatorReleaseInfo != installedReleaseInfo)
+                {
+                    var emulatorFolderPath = GetEmulatorFolderPath();
+                    _fileSystem.Directory.CreateDirectory(emulatorFolderPath);
+
+                    await _archiveDownloadService.DownloadAndExtractAsync(latestEmulatorReleaseInfo.DownloadUrl, emulatorFolderPath);
+
+                    await _localCacheService.SaveToCacheAsync(installedReleaseCacheFileName, latestEmulatorReleaseInfo);
+                }
             }
         }
 
@@ -101,6 +69,10 @@ namespace XeniaDeck.Core.Services
             {
                 _fileSystem.Directory.Delete(emulatorFolderPath, true);
             }
+
+            var installedReleaseCacheFilePath = _fileSystem.Path.Combine(_internalFoldersService.LocalCacheFolderPath, installedReleaseCacheFileName);
+
+            _fileSystem.File.Delete(installedReleaseCacheFilePath);
         }
     }
 }

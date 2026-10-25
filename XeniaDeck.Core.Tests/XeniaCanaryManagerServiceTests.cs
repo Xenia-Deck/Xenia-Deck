@@ -12,7 +12,8 @@ namespace XeniaDeck.Core.Tests
     {
         private readonly XeniaCanaryManagerService _sut;
         private readonly MockFileSystem _fileSystem;
-        private readonly IGitHubUpdateService _gitHubUpdateService;
+        private readonly IXeniaReleaseProviderService _xeniaReleaseProviderService;
+        private readonly ILocalCacheService _localCacheService;
         private readonly IArchiveDownloadService _archiveDownloadService;
         private readonly IInternalFoldersService _internalFoldersService;
         private readonly ILogger<XeniaCanaryManagerService> _logger;
@@ -21,13 +22,15 @@ namespace XeniaDeck.Core.Tests
         public XeniaCanaryManagerServiceTests()
         {
             _fileSystem = new MockFileSystem();
-            _gitHubUpdateService = Substitute.For<IGitHubUpdateService>();
+            _xeniaReleaseProviderService = Substitute.For<IXeniaReleaseProviderService>();
+            _localCacheService = Substitute.For<ILocalCacheService>();
             _archiveDownloadService = Substitute.For<IArchiveDownloadService>();
             _internalFoldersService = Substitute.For<IInternalFoldersService>();
             _logger = Substitute.For<ILogger<XeniaCanaryManagerService>>();
 
             _sut = new(_fileSystem,
-                _gitHubUpdateService,
+                _xeniaReleaseProviderService,
+                _localCacheService,
                 _archiveDownloadService,
                 _internalFoldersService,
                 _logger);
@@ -87,70 +90,22 @@ namespace XeniaDeck.Core.Tests
         }
 
         [Fact]
-        public void CreateEmulatorFolderPath_WhenNoEmulatorsFolderExists_ThrowIOException()
-        {
-            // Arrange
-            _internalFoldersService.GetEmulatorsFolderPath().ReturnsNull();
-
-            // Act
-            var exception = Assert.Throws<IOException>(_sut.CreateEmulatorFolderPath);
-
-            // Assert
-            Assert.Equal("Failed to create emulator folder", exception.Message);
-            _logger.Received(1).Log(
-              LogLevel.Error,
-              Arg.Any<EventId>(),
-              Arg.Is<object>(state => state.ToString()!.Contains("Failed to create emulator folder")),
-              Arg.Any<Exception>(),
-              Arg.Any<Func<object, Exception?, string>>());
-        }
-
-        [Fact]
-        public void CreateEmulatorFolderPath_WhenEmulatorsFolderExists_ReturnPath()
-        {
-            // Arrange
-            _internalFoldersService.GetEmulatorsFolderPath().Returns(_fakeEmulatorsFolderPath);
-
-            // Act
-            var result = _sut.CreateEmulatorFolderPath();
-
-            // Assert
-            Assert.Equal($@"{_fakeEmulatorsFolderPath}\Xenia Canary", result);
-        }
-
-        [Fact]
         public async Task CheckForUpdateAsync_WhenExceptionThrown_RethrowException()
         {
             // Arrange
-            _gitHubUpdateService.GetLatestEmulatorAsync(Arg.Any<long>(), Arg.Any<string>(), Arg.Any<string>()).ThrowsAsync<Exception>();
+            _xeniaReleaseProviderService.GetLatestReleaseAsync().ThrowsAsync<Exception>();
 
             // Act & Assert
-            var exception = await Assert.ThrowsAsync<Exception>(_sut.CheckForUpdateAsync);
-        }
-
-        [Fact]
-        public async Task CheckForUpdateAsync_WhenNoExceptionThrown_MethodGetsExecuted()
-        {
-            // Arrange
-
-            // Act
-            await _sut.CheckForUpdateAsync();
-
-            // Assert
-            await _gitHubUpdateService.Received(1).GetLatestEmulatorAsync(Arg.Any<long>(), Arg.Any<string>(), Arg.Any<string>());
+            var exception = await Assert.ThrowsAsync<Exception>(_sut.InstallXeniaCanaryAsync);
         }
 
         [Fact]
         public async Task InstallXeniaCanaryAsync_WhenEmulatorDataExists_DownloadsAndExtracts()
         {
             // Arrange
-            var fakeData = new EmulatorData
-            {
-                DownloadUrl = "https://example.com"
-            };
+            var fakeData = new EmulatorReleaseInfo("xenia", "https://example.com");
 
-            _gitHubUpdateService.GetCachedEmulatorAsync(Arg.Any<string>())
-                .Returns(fakeData);
+            _xeniaReleaseProviderService.GetLatestReleaseAsync().Returns(fakeData);
 
             // Act
             await _sut.InstallXeniaCanaryAsync();
@@ -164,8 +119,7 @@ namespace XeniaDeck.Core.Tests
         public async Task InstallXeniaCanaryAsync_WhenEmulatorDataIsNull_ReturnsEarlyWithoutDownloading()
         {
             // Arrange
-            _gitHubUpdateService.GetCachedEmulatorAsync(Arg.Any<string>())
-                .ReturnsNull();
+            _xeniaReleaseProviderService.GetLatestReleaseAsync().ReturnsNull();
 
             // Act
             await _sut.InstallXeniaCanaryAsync();

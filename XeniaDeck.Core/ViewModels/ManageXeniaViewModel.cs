@@ -34,9 +34,7 @@ namespace XeniaDeck.Core.ViewModels
         {
             try
             {
-                await _xeniaCanaryManagerService.CheckForUpdateAsync();
-
-                // TODO: also install the update or smth like that
+                await _xeniaCanaryManagerService.InstallXeniaCanaryAsync();
             }
             catch (RateLimitExceededException e)
             {
@@ -61,8 +59,6 @@ namespace XeniaDeck.Core.ViewModels
         {
             try
             {
-                await _xeniaCanaryManagerService.CheckForUpdateAsync();
-
                 await _xeniaCanaryManagerService.InstallXeniaCanaryAsync();
 
                 var fileName = Path.Combine(_xeniaCanaryManagerService.GetEmulatorFolderPath(), "xenia_canary.exe");

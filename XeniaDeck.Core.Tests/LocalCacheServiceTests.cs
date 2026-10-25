@@ -38,11 +38,7 @@ namespace XeniaDeck.Core.Tests
             // Arrange
             var fileName = "test.json";
             var expectedPath = Path.Combine(_fakeCacheFolder, fileName);
-            var testData = new EmulatorData
-            {
-                Name = "Xenia Canary",
-                FileName = "xenia_canary_windows.exe"
-            };
+            var testData = new EmulatorReleaseInfo("Xenia", "www.example.com");
 
             // Act
             await _sut.SaveToCacheAsync(fileName, testData);
@@ -51,11 +47,11 @@ namespace XeniaDeck.Core.Tests
             Assert.True(_fileSystem.FileExists(expectedPath));
 
             var savedJson = await _fileSystem.File.ReadAllTextAsync(expectedPath, TestContext.Current.CancellationToken);
-            var deserializedData = JsonSerializer.Deserialize<EmulatorData>(savedJson);
+            var deserializedData = JsonSerializer.Deserialize<EmulatorReleaseInfo>(savedJson);
 
             Assert.NotNull(deserializedData);
-            Assert.Equal("Xenia Canary", deserializedData.Name);
-            Assert.Equal("xenia_canary_windows.exe", deserializedData.FileName);
+            Assert.Equal("Xenia", deserializedData.Name);
+            Assert.Equal("www.example.com", deserializedData.DownloadUrl);
         }
 
         [Fact]
@@ -66,7 +62,7 @@ namespace XeniaDeck.Core.Tests
 
             // Act & Assert
             await Assert.ThrowsAsync<DirectoryNotFoundException>(() =>
-                _sut.SaveToCacheAsync(fileName, new EmulatorData())
+                _sut.SaveToCacheAsync(fileName, new EmulatorReleaseInfo("Xenia", "www.example.com"))
             );
 
             _logger.Received(1).Log(
@@ -83,22 +79,18 @@ namespace XeniaDeck.Core.Tests
             // Arrange
             var fileName = "cached_data.json";
             var filePath = Path.Combine(_fakeCacheFolder, fileName);
-            var originalData = new EmulatorData
-            {
-                Name = "Xenia Stable",
-                FileName = "xenia.exe"
-            };
+            var originalData = new EmulatorReleaseInfo("Xenia Stable", "www.example.com");
 
             var json = JsonSerializer.Serialize(originalData, _jsonSerializerOptions);
             _fileSystem.AddFile(filePath, new MockFileData(json));
 
             // Act
-            var result = await _sut.GetFromCacheAsync<EmulatorData>(fileName);
+            var result = await _sut.GetFromCacheAsync<EmulatorReleaseInfo>(fileName);
 
             // Assert
             Assert.NotNull(result);
             Assert.Equal("Xenia Stable", result.Name);
-            Assert.Equal("xenia.exe", result.FileName);
+            Assert.Equal("www.example.com", result.DownloadUrl);
         }
 
         [Fact]
@@ -110,7 +102,7 @@ namespace XeniaDeck.Core.Tests
             _fileSystem.AddFile(filePath, new MockFileData(string.Empty));
 
             // Act
-            var result = await _sut.GetFromCacheAsync<EmulatorData>(fileName);
+            var result = await _sut.GetFromCacheAsync<EmulatorReleaseInfo>(fileName);
 
             // Assert
             Assert.Null(result);
@@ -125,7 +117,7 @@ namespace XeniaDeck.Core.Tests
             _fileSystem.AddFile(filePath, new MockFileData("{ invalid json }"));
 
             // Act
-            var result = await _sut.GetFromCacheAsync<EmulatorData>(fileName);
+            var result = await _sut.GetFromCacheAsync<EmulatorReleaseInfo>(fileName);
 
             // Assert
             Assert.Null(result);
