@@ -12,7 +12,6 @@
             ReleaseAssetName: "xenia_canary_windows.7z"
         );
 
-        // TODO: Don't make this static, it caries over sht from other tests
-        public static IReadOnlyList<XeniaVersionSettings> AllXeniaVersions { get; } = [new() { XeniaVersionDefinition = Canary }];
+        public static IReadOnlyList<XeniaVersionDefinition> AllXeniaVersions { get; } = [Canary];
     }
 }

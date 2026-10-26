@@ -28,11 +28,13 @@ namespace XeniaDeck.Core.Services
 
             if (!_fileSystem.File.Exists(settingsFilePath))
             {
-                var defaults = new AppSettings([.. XeniaVersions.AllXeniaVersions]);
+                var xeniaVersions = XeniaVersions.AllXeniaVersions.Select(x => new XeniaVersionSettings() { XeniaVersionDefinition = x }).ToList();
 
-                await SaveAsync(defaults);
+                var defaultAppSettings = new AppSettings(xeniaVersions);
 
-                return defaults;
+                await SaveAsync(defaultAppSettings);
+
+                return defaultAppSettings;
             }
 
             using var stream = _fileSystem.FileStream.New(settingsFilePath, FileMode.Open, FileAccess.Read);

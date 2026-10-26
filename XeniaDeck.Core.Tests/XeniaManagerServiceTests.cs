@@ -104,7 +104,7 @@ namespace XeniaDeck.Core.Tests
         {
             // Arrange
             var fakeData = new EmulatorReleaseInfo("xenia_canary", "https://example.com");
-            var fakeAppSettings = new AppSettings([.. XeniaVersions.AllXeniaVersions]);
+            var fakeAppSettings = new AppSettings(XeniaVersions.AllXeniaVersions.Select(x => new XeniaVersionSettings() { XeniaVersionDefinition = x }).ToList());
 
             _xeniaReleaseProviderService.GetLatestReleaseAsync(XeniaVersions.Canary).Returns(fakeData);
             _appSettingsService.LoadAsync().Returns(fakeAppSettings);
@@ -121,7 +121,7 @@ namespace XeniaDeck.Core.Tests
         public async Task InstallAsync_WhenLatestEmulatorInstalled_ReturnsEarlyWithoutDownloading()
         {
             // Arrange
-            var fakeAppSettings = new AppSettings([.. XeniaVersions.AllXeniaVersions]);
+            var fakeAppSettings = new AppSettings(XeniaVersions.AllXeniaVersions.Select(x => new XeniaVersionSettings() { XeniaVersionDefinition = x }).ToList());
 
             _xeniaReleaseProviderService.GetLatestReleaseAsync(XeniaVersions.Canary).ReturnsNull();
             _appSettingsService.LoadAsync().Returns(fakeAppSettings);
@@ -140,7 +140,7 @@ namespace XeniaDeck.Core.Tests
         public async Task UninstallAsync_WhenCalled_DeletesEmulatorFolder()
         {
             // Arrange
-            var fakeAppSettings = new AppSettings([.. XeniaVersions.AllXeniaVersions]);
+            var fakeAppSettings = new AppSettings(XeniaVersions.AllXeniaVersions.Select(x => new XeniaVersionSettings() { XeniaVersionDefinition = x }).ToList());
             _fileSystem.AddDirectory($@"{_fakeEmulatorsFolderPath}\Xenia Canary");
 
             _internalFoldersService.GetEmulatorsFolderPath().Returns(_fakeEmulatorsFolderPath);
