@@ -11,7 +11,7 @@
   <Identity
     Name="XeniaDeck.XeniaDeck"
     Publisher="CN=B6927859-E3FB-4D05-A9C4-3727C01EA301"
-    Version="0.5.1.0" />
+    Version="0.5.2.0" />
 
   <mp:PhoneIdentity PhoneProductId="1116abf2-2b77-43cc-9d69-d904eb8689ed" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
@@ -36,7 +36,7 @@
       EntryPoint="$targetentrypoint$">
       <uap:VisualElements
         DisplayName="Xenia Deck"
-        Description="Xenia Deck is a UI manager for the Xenia emulator for easy downloading and game storing"
+        Description="Xenia Deck is a lightweight manager utility for the Xenia emulator. It automates the process of finding and downloading the latest emulator files."
         BackgroundColor="transparent"
         Square150x150Logo="Assets\Square150x150Logo.png"
         Square44x44Logo="Assets\Square44x44Logo.png">

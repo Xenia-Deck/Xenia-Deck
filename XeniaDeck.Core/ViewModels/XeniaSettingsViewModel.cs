@@ -7,6 +7,7 @@ using Tomlyn;
 using Tomlyn.Model;
 using Tomlyn.Serialization;
 using Tomlyn.Syntax;
+using XeniaDeck.Core.Models;
 using XeniaDeck.Core.Services;
 
 namespace XeniaDeck.Core.ViewModels
@@ -33,18 +34,18 @@ namespace XeniaDeck.Core.ViewModels
 
         private readonly IFileSystem _fileSystem;
         private readonly IInternalFoldersService _internalFoldersService;
-        private readonly IXeniaCanaryManagerService _xeniaCanaryManagerService;
+        private readonly IXeniaManagerService _xeniaManagerService;
 
-        public XeniaSettingsViewModel(IFileSystem fileSystem, IInternalFoldersService internalFoldersService, IXeniaCanaryManagerService xeniaCanaryManagerService)
+        public XeniaSettingsViewModel(IFileSystem fileSystem, IInternalFoldersService internalFoldersService, IXeniaManagerService xeniaManagerService)
         {
             _fileSystem = fileSystem;
             _internalFoldersService = internalFoldersService;
-            _xeniaCanaryManagerService = xeniaCanaryManagerService;
+            _xeniaManagerService = xeniaManagerService;
         }
 
         public void LoadSettingsAsync()
         {
-            if (_xeniaCanaryManagerService.IsXeniaCanaryInstalled())
+            if (_xeniaManagerService.IsInstalled(XeniaVersions.Canary))
             {
                 ExecLoadSettingsAsync();
             }

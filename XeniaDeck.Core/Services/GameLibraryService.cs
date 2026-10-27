@@ -5,6 +5,7 @@ using System.IO.Abstractions;
 using System.Text.Json;
 using XboxToolkit;
 using XeniaDeck.Core.Models;
+using XeniaManagerDatabase.Services;
 
 namespace XeniaDeck.Core.Services
 {

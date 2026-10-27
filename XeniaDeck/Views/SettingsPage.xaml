@@ -179,7 +179,8 @@
                 </controls:SettingsExpander>
 
                 <TextBlock Margin="0,18,0,18">
-                   <Hyperlink UnderlineStyle="None">
+                   <Hyperlink UnderlineStyle="None"
+                              NavigateUri="https://github.com/Xenia-Deck/Xenia-Deck/issues">
                        <Run x:Uid="SendFeedbackRun"/>
                    </Hyperlink>
                 </TextBlock>
@@ -188,7 +189,8 @@
                     <Run x:Uid="ContributeRun"/>
                     <Run Text="{x:Bind appmodel:AppInfo.Current.DisplayInfo.DisplayName}"/><Run x:Uid="CheckOutRun"/>
                     
-                    <Hyperlink UnderlineStyle="None">
+                    <Hyperlink UnderlineStyle="None"
+                               NavigateUri="https://github.com/Xenia-Deck/Xenia-Deck">
                         <Run Text="GitHub"/>
                     </Hyperlink><Run Text="."/>
                 </TextBlock>

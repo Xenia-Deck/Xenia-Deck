@@ -12,4 +12,5 @@
     <Platform Solution="*|x86" Project="x86" />
     <Deploy />
   </Project>
+  <Project Path="XeniaManagerDatabase/XeniaManagerDatabase.csproj" Id="31e6415c-6d9a-4e17-b236-3cf4b97f8a09" />
 </Solution>
