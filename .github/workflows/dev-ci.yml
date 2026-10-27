@@ -1,0 +1,15 @@
+name: Dev Continuous Integration
+
+on:
+  push:
+    branches: [ dev ]
+  pull_request:
+    branches: [ dev ]
+
+jobs:
+  run-ci:
+    uses: ./.github/workflows/_build-and-package.yml
+    with:
+      build_configuration: 'Debug'
+      environment_name: 'development'
+      publish_to_store: false

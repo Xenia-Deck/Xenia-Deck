@@ -1,24 +1,24 @@
 ﻿using Microsoft.Extensions.Logging;
 using System.Net.Http.Json;
 using System.Text.Json;
-using XeniaDeck.Core.Models;
+using XeniaManagerDatabase.Models;
 
-namespace XeniaDeck.Core.Services
+namespace XeniaManagerDatabase.Services
 {
-    // TODO: i think this can be moved to it's own project since it's not dependent on me
-    // TODO: should prob delete the tests too
-    // TODO: the rest of the project will be less dependent on this, I swear
-
     public class Xbox360DatabaseService : IXbox360DatabaseService
     {
         private readonly HttpClient _httpClient;
-        private readonly JsonSerializerOptions _jsonSerializerOptions;
         private readonly ILogger<Xbox360DatabaseService> _logger;
 
-        public Xbox360DatabaseService(HttpClient httpClient, JsonSerializerOptions jsonSerializerOptions, ILogger<Xbox360DatabaseService> logger)
+        private readonly JsonSerializerOptions _jsonSerializerOptions = new()
+        {
+            WriteIndented = true,
+            PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower
+        };
+
+        public Xbox360DatabaseService(HttpClient httpClient, ILogger<Xbox360DatabaseService> logger)
         {
             _httpClient = httpClient;
-            _jsonSerializerOptions = jsonSerializerOptions;
             _logger = logger;
         }
 

@@ -4,6 +4,7 @@ using System.IO.Abstractions.TestingHelpers;
 using System.Text.Json;
 using XeniaDeck.Core.Models;
 using XeniaDeck.Core.Services;
+using XeniaManagerDatabase.Services;
 
 namespace XeniaDeck.Core.Tests
 {
@@ -55,11 +56,11 @@ namespace XeniaDeck.Core.Tests
             // Arrange
             var sampleGames = new List<Game>
             {
-                new(536473, true, @"C:\XeniaDeck\Games\game1.xbla", new()),
-                new(359593, true, @"C:\XeniaDeck\Games\game2.xbla", new()),
-                new(425894, true, @"C:\XeniaDeck\Games\game3.xbla", new()),
-                new(759302, true, @"C:\XeniaDeck\Games\game4.xbla", new()),
-                new(468263, true, @"C:\XeniaDeck\Games\game5.xbla", new())
+                new(536473, true, @"C:\XeniaDeck\Games\game1.xbla", null!),
+                new(359593, true, @"C:\XeniaDeck\Games\game2.xbla", null!),
+                new(425894, true, @"C:\XeniaDeck\Games\game3.xbla", null!),
+                new(759302, true, @"C:\XeniaDeck\Games\game4.xbla", null!),
+                new(468263, true, @"C:\XeniaDeck\Games\game5.xbla", null!)
             };
 
             var jsonContent = JsonSerializer.Serialize(sampleGames, _jsonSerializerOptions);
@@ -101,11 +102,11 @@ namespace XeniaDeck.Core.Tests
             // Arrange
             var sampleGames = new List<Game>
             {
-                new(536473, true, @"C:\XeniaDeck\Games\game1.xbla", new()),
-                new(359593, true, @"C:\XeniaDeck\Games\game2.xbla", new()),
-                new(425894, true, @"C:\XeniaDeck\Games\game3.xbla", new()),
-                new(759302, true, @"C:\XeniaDeck\Games\game4.xbla", new()),
-                new(468263, true, @"C:\XeniaDeck\Games\game5.xbla", new())
+                new(536473, true, @"C:\XeniaDeck\Games\game1.xbla", null!),
+                new(359593, true, @"C:\XeniaDeck\Games\game2.xbla", null!),
+                new(425894, true, @"C:\XeniaDeck\Games\game3.xbla", null!),
+                new(759302, true, @"C:\XeniaDeck\Games\game4.xbla", null!),
+                new(468263, true, @"C:\XeniaDeck\Games\game5.xbla", null!)
             };
 
             _fileSystem.AddFile(@"C:\XeniaDeck\Config\games.json", new MockFileData(string.Empty));

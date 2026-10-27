@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.Input;
 using Octokit;
 using System.Diagnostics;
+using XeniaDeck.Core.Models;
 using XeniaDeck.Core.Services;
 
 namespace XeniaDeck.Core.ViewModels
@@ -15,18 +16,20 @@ namespace XeniaDeck.Core.ViewModels
         // TODO: Implement this into the UI with 2 different TextBlocks with a SwitchPresenter instead of this
         public string XeniaCanaryStatusDescription => IsXeniaCanaryInstalled ? "Installed" : "Not Installed";
 
-        private readonly IXeniaCanaryManagerService _xeniaCanaryManagerService;
+        private readonly IXeniaManagerService _xeniaManagerService;
         private readonly IDialogService _dialogService;
 
-        public ManageXeniaViewModel(IXeniaCanaryManagerService xeniaCanaryManagerService, IDialogService dialogService)
+        public ManageXeniaViewModel(IXeniaManagerService xeniaManagerService, IDialogService dialogService)
         {
-            _xeniaCanaryManagerService = xeniaCanaryManagerService;
+            _xeniaManagerService = xeniaManagerService;
             _dialogService = dialogService;
         }
 
         public void RefreshInstallationStatus()
         {
-            IsXeniaCanaryInstalled = _xeniaCanaryManagerService.IsXeniaCanaryInstalled();
+            // TODO: prototype, make one for every xenia version
+
+            IsXeniaCanaryInstalled = _xeniaManagerService.IsInstalled(XeniaVersions.Canary);
         }
 
         [RelayCommand]
@@ -34,9 +37,9 @@ namespace XeniaDeck.Core.ViewModels
         {
             try
             {
-                await _xeniaCanaryManagerService.CheckForUpdateAsync();
+                // TODO: prototype, make one for every xenia version
 
-                // TODO: also install the update or smth like that
+                await _xeniaManagerService.InstallAsync(XeniaVersions.Canary);
             }
             catch (RateLimitExceededException e)
             {
@@ -61,11 +64,11 @@ namespace XeniaDeck.Core.ViewModels
         {
             try
             {
-                await _xeniaCanaryManagerService.CheckForUpdateAsync();
+                // TODO: prototype, make one for every xenia version
 
-                await _xeniaCanaryManagerService.InstallXeniaCanaryAsync();
+                await _xeniaManagerService.InstallAsync(XeniaVersions.Canary);
 
-                var fileName = Path.Combine(_xeniaCanaryManagerService.GetEmulatorFolderPath(), "xenia_canary.exe");
+                var fileName = Path.Combine(_xeniaManagerService.GetEmulatorFolderPath(XeniaVersions.Canary), XeniaVersions.Canary.ExecutableName);
 
                 using var executableProcess = new Process()
                 {
@@ -108,7 +111,7 @@ namespace XeniaDeck.Core.ViewModels
         {
             try
             {
-                _xeniaCanaryManagerService.UninstallXeniaCanary();
+                await _xeniaManagerService.UninstallAsync(XeniaVersions.Canary);
 
                 RefreshInstallationStatus();
             }
