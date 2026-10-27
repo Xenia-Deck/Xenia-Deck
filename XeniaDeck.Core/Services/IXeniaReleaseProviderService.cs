@@ -4,6 +4,6 @@ namespace XeniaDeck.Core.Services
 {
     public interface IXeniaReleaseProviderService
     {
-        Task<EmulatorReleaseInfo> GetLatestReleaseAsync();
+        Task<EmulatorReleaseInfo> GetLatestReleaseAsync(XeniaVersionDefinition xeniaVersionDefinition);
     }
 }

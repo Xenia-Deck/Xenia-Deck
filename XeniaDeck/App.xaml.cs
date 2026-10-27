@@ -59,6 +59,7 @@ namespace XeniaDeck
 
                     services.AddXbox360Database();
 
+                    services.AddSingleton<IAppSettingsService, AppSettingsService>();
                     services.AddSingleton<IGitHubClient, GitHubClient>(x => new GitHubClient(new ProductHeaderValue("xenia_manager")));
                     services.AddTransient(x =>
                         new JsonSerializerOptions()
@@ -89,7 +90,7 @@ namespace XeniaDeck
                     services.AddTransient<IGameLibraryService, GameLibraryService>();
                     services.AddTransient<ILocalCacheService, LocalCacheService>();
                     services.AddTransient<IGameFileExtensionIdentifierService, GameFileExtensionIdentifierService>();
-                    services.AddTransient<IXeniaCanaryManagerService, XeniaCanaryManagerService>();
+                    services.AddTransient<IXeniaManagerService, XeniaManagerService>();
                     services.AddTransient<IXeniaReleaseProviderService, GitHubXeniaReleaseProviderService>();
 
                     services.AddTransient<GameLibraryViewModel>();

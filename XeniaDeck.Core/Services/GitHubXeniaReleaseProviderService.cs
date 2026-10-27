@@ -5,8 +5,6 @@ namespace XeniaDeck.Core.Services
 {
     public class GitHubXeniaReleaseProviderService : IXeniaReleaseProviderService
     {
-        private const int repositoryId = 200145485;
-        private const string targetFileName = "xenia_canary_windows.7z";
         private readonly IGitHubClient _gitHubClient;
 
         public GitHubXeniaReleaseProviderService(IGitHubClient gitHubClient)
@@ -14,11 +12,11 @@ namespace XeniaDeck.Core.Services
             _gitHubClient = gitHubClient;
         }
 
-        public async Task<EmulatorReleaseInfo> GetLatestReleaseAsync()
+        public async Task<EmulatorReleaseInfo> GetLatestReleaseAsync(XeniaVersionDefinition xeniaVersionDefinition)
         {
-            var latestRelease = await _gitHubClient.Repository.Release.GetLatest(repositoryId);
+            var latestRelease = await _gitHubClient.Repository.Release.GetLatest(xeniaVersionDefinition.GithubRepositoryId);
 
-            var releaseAsset = latestRelease.Assets.First(a => a.Name == targetFileName);
+            var releaseAsset = latestRelease.Assets.First(a => a.Name == xeniaVersionDefinition.ReleaseAssetName);
 
             return new EmulatorReleaseInfo(latestRelease.Name, releaseAsset.BrowserDownloadUrl);
         }
