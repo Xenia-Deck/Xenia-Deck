@@ -53,11 +53,15 @@ jobs:
     - name: Setup MSBuild
       uses: microsoft/setup-msbuild@v3
 
+    # need a better way to get the version from the manifest
     - name: Package WinUI 3 App
       run: |
+        $packageVersion = (Select-Xml -Path XeniaDeck\Package.appxmanifest -XPath "/*[local-name()='Package']/*[local-name()='Identity']").Node.GetAttribute("Version")
+        $packageName = "XeniaDeck_${packageVersion}_${{ inputs.environment_name }}"
         msbuild XeniaDeck\XeniaDeck.csproj `
           /p:Configuration=${{ inputs.build_configuration }} `
           /p:Platform=x64 `
+          /p:AppxPackageName=$packageName `
           /p:UapAppxPackageBuildMode=StoreUpload `
           /p:AppxPackageSigningEnabled=false `
           /p:GenerateAppxPackageOnBuild=true `
